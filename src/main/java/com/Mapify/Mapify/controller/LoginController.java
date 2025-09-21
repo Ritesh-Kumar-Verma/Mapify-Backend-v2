@@ -1,0 +1,40 @@
+package com.Mapify.Mapify.controller;
+
+import com.Mapify.Mapify.model.Users;
+import com.Mapify.Mapify.services.LoginService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class LoginController {
+
+    @Autowired
+    LoginService loginService;
+
+    @GetMapping("/health")
+    public String health(){
+        return "OK";
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<?> registerUser(@RequestBody Users user){
+        if(user.getUsername() !=null && user.getPassword() !=null && user.getEmail()!=null ){
+            return loginService.registerUser(user);
+        }
+        return new ResponseEntity<>("Incomplete Data" , HttpStatus.NOT_ACCEPTABLE);
+
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> verifyUser(@RequestBody Users user){
+        return loginService.verifyUser(user);
+    }
+
+
+
+}
