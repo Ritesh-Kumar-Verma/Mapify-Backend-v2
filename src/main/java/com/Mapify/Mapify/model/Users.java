@@ -15,6 +15,8 @@ public class Users {
     private String username;
     private String password;
     private String email;
+    private String role;
+
 
     public String getRole() {
         return role;
@@ -24,7 +26,6 @@ public class Users {
         this.role = role;
     }
 
-    private String role;
 
     @Override
     public String toString() {

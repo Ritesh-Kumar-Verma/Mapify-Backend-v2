@@ -22,15 +22,18 @@ public class LoginService {
     @Autowired
     AuthenticationManager authManager;
 
+    @Autowired
+    JWTService jwtService;
+
     BCryptPasswordEncoder encode=new BCryptPasswordEncoder(10);
 
 
-    public ResponseEntity<?> verifyUser(Users user) {
+    public String verifyUser(Users user) {
         Authentication authentication = authManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername() , user.getPassword()));
         if(authentication.isAuthenticated()){
-            return new ResponseEntity<>("Success" , HttpStatus.OK);
+            return jwtService.generateToken(user.getUsername());
         }
-        return new ResponseEntity<>("Fail",HttpStatus.UNAUTHORIZED);
+        return "Wrong Credentials";
     }
 
 

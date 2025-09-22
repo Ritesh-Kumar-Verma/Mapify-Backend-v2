@@ -31,8 +31,14 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> verifyUser(@RequestBody Users user){
+    public String verifyUser(@RequestBody Users user){
         return loginService.verifyUser(user);
+    }
+
+    @GetMapping("/getdata")
+    public ResponseEntity<String> getData(){
+        System.out.println("asdhaslkdhas");
+        return new ResponseEntity<>("Worked",HttpStatus.OK);
     }
 
 
