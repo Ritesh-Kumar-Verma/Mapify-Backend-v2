@@ -39,7 +39,6 @@ public class LoginService {
 
     public ResponseEntity<?> registerUser(Users user) {
 
-
         Optional<Users> u1 = userLoginRepo.findByUsername(user.getUsername());
 
         if(u1.isPresent()){

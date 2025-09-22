@@ -27,7 +27,6 @@ public class LoginController {
             return loginService.registerUser(user);
         }
         return new ResponseEntity<>("Incomplete Data" , HttpStatus.NOT_ACCEPTABLE);
-
     }
 
     @PostMapping("/login")
