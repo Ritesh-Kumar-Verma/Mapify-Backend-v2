@@ -26,6 +26,7 @@ public class JWTService {
         KeyGenerator keyGenerator = KeyGenerator.getInstance("HmacSHA256");
         SecretKey sk = keyGenerator.generateKey();
         secretKey = Base64.getEncoder().encodeToString(sk.getEncoded());
+        System.out.println("**************************\n"+secretKey+"\n**********************");
     }
 
 

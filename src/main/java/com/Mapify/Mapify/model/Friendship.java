@@ -15,12 +15,23 @@ public class Friendship {
     @ManyToOne
     private Users receiver;
 
+    private String status;
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     public Friendship() {
     }
 
     public Friendship(Users sender, Users receiver) {
         this.sender = sender;
         this.receiver = receiver;
+        this.status = "Pending";
     }
 
     @Override
