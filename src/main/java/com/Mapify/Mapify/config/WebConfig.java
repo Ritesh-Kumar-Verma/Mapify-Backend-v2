@@ -32,6 +32,7 @@ public class WebConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .httpBasic(Customizer.withDefaults())
+                .cors(Customizer.withDefaults())
                 .csrf( csrf-> csrf.disable())
                 .sessionManagement(session-> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth

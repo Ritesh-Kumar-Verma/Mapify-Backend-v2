@@ -22,7 +22,7 @@ public class LoginController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@RequestBody Users user){
+    public ResponseEntity<String> registerUser(@RequestBody Users user){
         if(user.getUsername() !=null && user.getPassword() !=null && user.getEmail()!=null ){
             return loginService.registerUser(user);
         }
@@ -30,7 +30,7 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public String verifyUser(@RequestBody Users user){
+    public ResponseEntity<String> verifyUser(@RequestBody Users user){
         return loginService.verifyUser(user);
     }
 

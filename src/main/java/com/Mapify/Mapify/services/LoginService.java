@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -28,16 +29,22 @@ public class LoginService {
     BCryptPasswordEncoder encode=new BCryptPasswordEncoder(10);
 
 
-    public String verifyUser(Users user) {
-        Authentication authentication = authManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername() , user.getPassword()));
-        if(authentication.isAuthenticated()){
-            return jwtService.generateToken(user.getUsername());
+    public ResponseEntity<String> verifyUser(Users user) {
+        try{
+            Authentication authentication = authManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername() , user.getPassword()));
+            return new ResponseEntity<>(jwtService.generateToken(user.getUsername()), HttpStatus.OK );
+
         }
-        return "Wrong Credentials";
+        catch (BadCredentialsException e){
+            return new ResponseEntity<>("Wrong Credentials" , HttpStatus.UNAUTHORIZED);
+        }
     }
 
 
-    public ResponseEntity<?> registerUser(Users user) {
+    public ResponseEntity<String> registerUser(Users user) {
+        if( user.getUsername().trim().length() == 0 || user.getPassword().trim().length() == 0 || user.getEmail().trim().length() == 0   ){
+            return new ResponseEntity<>("Blank Data Not Acceptable" , HttpStatus.NOT_ACCEPTABLE);
+        }
 
         Optional<Users> u1 = userLoginRepo.findByUsername(user.getUsername());
 
@@ -47,7 +54,7 @@ public class LoginService {
         user.setPassword(encode.encode(user.getPassword()));
         user.setRole("USER");
         userLoginRepo.save(user);
-        return new ResponseEntity<>(user.getUsername() ,HttpStatus.OK);
+        return new ResponseEntity<>(jwtService.generateToken(user.getUsername()) ,HttpStatus.OK);
 
     }
 }
