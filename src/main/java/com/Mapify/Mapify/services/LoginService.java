@@ -13,6 +13,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Map;
 import java.util.Optional;
@@ -79,7 +80,7 @@ public class LoginService {
         String username = jwtService.extractUsername(token);
 
         Users user = userLoginRepo.findByUsername(username)
-                .orElseThrow(()->new RuntimeException("User Not Found"));
+                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"User Not Found"));
 
         String currentPassword = body.get("currentPassword");
         String newPassword = body.get("newPassword");

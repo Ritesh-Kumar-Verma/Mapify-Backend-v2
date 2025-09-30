@@ -65,9 +65,9 @@ public class UserService {
         }
 
         Users sender = userLoginRepo.findByUsername(senderUser)
-                .orElseThrow(()->new RuntimeException("Sender Not Found"));
+                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Sender Not Found"));
         Users receiver = userLoginRepo.findByUsername(receiverUser)
-                .orElseThrow(()->new RuntimeException("Receiver Not found"));
+                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Receiver Not found"));
 
         Optional<Friendship> f = friendshipRepo.findBySenderAndReceiver(sender,receiver);
 
@@ -86,16 +86,17 @@ public class UserService {
         String receiverUsername = jwtService.extractUsername(token);
 
         Users sender = userLoginRepo.findByUsername(senderUsername)
-                .orElseThrow(()->new RuntimeException("Sender Not Found"));
+                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Sender Not Found"));
         Users receiver = userLoginRepo.findByUsername(receiverUsername)
-                .orElseThrow(()->new RuntimeException("Receiver Not Found"));
+                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Receiver Not Found"));
+        Optional<Friendship> friendship1 = friendshipRepo.findBySenderAndReceiverAndStatus(sender,receiver,"Accepted");
 
-        Friendship friendship1 = friendshipRepo.findBySenderAndReceiverAndStatus(sender,receiver,"Accepted")
-                .orElseThrow(()->new ResponseStatusException(HttpStatus.CONFLICT,"Already Exist"));
-
+        if(friendship1.isPresent()){
+            return new ResponseEntity<>("Accepted" , HttpStatus.OK);
+        }
 
         Friendship friendship = friendshipRepo.findBySenderAndReceiverAndStatus(sender,receiver,"Pending")
-                .orElseThrow(()->new RuntimeException("Friendship Not Found"));
+                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Friendship Not Found"));
 
         if(friendship.getStatus().equals("Pending")){
             friendship.setStatus("Accepted");
@@ -103,14 +104,10 @@ public class UserService {
         }
 
         else{
-            throw new RuntimeException("FriendShip not Pending");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"FriendShip not Pending");
         }
 
         return new ResponseEntity<>("Success" , HttpStatus.OK);
-
-
-
-
     }
 
 
@@ -118,7 +115,7 @@ public class UserService {
         String receiverUsername = jwtService.extractUsername(token);
 
         Users receiverUser = userLoginRepo.findByUsername(receiverUsername)
-                .orElseThrow(()->new RuntimeException("User Not Found"));
+                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"User Not Found"));
 
         List<Friendship> friendshipList = friendshipRepo.findByReceiverAndStatus(receiverUser,"Pending");
 
@@ -135,7 +132,7 @@ public class UserService {
         String username = jwtService.extractUsername(token);
 
         Users user = userLoginRepo.findByUsername(username)
-                .orElseThrow(()->new RuntimeException("Username Not Found"));
+                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Username Not Found"));
 
         List<Friendship> friendshipList = friendshipRepo.findBySenderAndStatus(user, "Pending");
 
@@ -154,22 +151,25 @@ public class UserService {
         String receiverUsername = jwtService.extractUsername(token);
 
         Users sender = userLoginRepo.findByUsername(senderUsername)
-                .orElseThrow(()-> new RuntimeException("Sender Not found"));
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Sender Not found"));
 
         Users receiver = userLoginRepo.findByUsername(receiverUsername)
-                .orElseThrow(()->new RuntimeException("Receiver Not Found"));
+                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Receiver Not Found"));
 
         friendshipRepo.deleteBySenderAndReceiverAndStatus(sender,receiver,"Pending");
         return new ResponseEntity<>("Success" , HttpStatus.OK);
     }
 
+
+
+
     @Transactional
     public ResponseEntity<String> cancelRequest(String token, String receiverUsername) {
         String senderUsername = jwtService.extractUsername(token);
         Users sender = userLoginRepo.findByUsername(senderUsername)
-                .orElseThrow(()->new RuntimeException("Sender Not Found"));
+                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Sender Not Found"));
         Users receiver = userLoginRepo.findByUsername(receiverUsername)
-                .orElseThrow(()->new RuntimeException("Receiver Not Found"));
+                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Receiver Not Found"));
 
         friendshipRepo.deleteBySenderAndReceiverAndStatus(sender,receiver,"Pending");
         return new ResponseEntity<>("Success" , HttpStatus.OK);
@@ -179,7 +179,7 @@ public class UserService {
     public ResponseEntity<List<String>> getFriendsList(String token) {
         String senderUsername = jwtService.extractUsername(token);
         Users sender = userLoginRepo.findByUsername(senderUsername)
-                .orElseThrow(()->new RuntimeException("Not Found"));
+                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Not Found"));
 
         List<Friendship> friendshipList = friendshipRepo.findBySenderAndStatus(sender,"Accepted");
 
@@ -195,9 +195,9 @@ public class UserService {
         String username1 = jwtService.extractUsername(token);
 
         Users user1 = userLoginRepo.findByUsername(username1)
-                .orElseThrow(()->new RuntimeException("Not Found"));
+                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Not Found"));
         Users user2 = userLoginRepo.findByUsername(username2)
-                .orElseThrow(()->new RuntimeException("Not Found"));
+                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Not Found"));
 
         Optional<Friendship> f = friendshipRepo.findBySenderAndReceiverAndStatus(user1, user2, "Accepted" );
 
@@ -216,9 +216,9 @@ public class UserService {
         String usernam1 = jwtService.extractUsername(token);
 
         Users sender = userLoginRepo.findByUsername(usernam1)
-                .orElseThrow(()->new RuntimeException("Sender Not Found"));
+                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Sender Not Found"));
         Users receiver = userLoginRepo.findByUsername(username2)
-                .orElseThrow(()->new RuntimeException("Receiver Not found"));
+                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Receiver Not found"));
 
         Optional<Friendship> f1 = friendshipRepo.findBySenderAndReceiverAndStatus(sender , receiver,"Accepted");
 
@@ -235,7 +235,7 @@ public class UserService {
         String username = jwtService.extractUsername(token);
 
         Users user = userLoginRepo.findByUsername(username)
-                .orElseThrow(()->new RuntimeException("User Not Found"));
+                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"User Not Found"));
 
         List<Friendship> friendships = friendshipRepo.findByReceiverAndStatus(user,"Accepted");
 
@@ -251,9 +251,9 @@ public class UserService {
         String username1 = jwtService.extractUsername(token);
 
         Users user1 = userLoginRepo.findByUsername(username1)
-                .orElseThrow(()->new RuntimeException("User Not Found"));
+                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"User Not Found"));
         Users user2 = userLoginRepo.findByUsername(username2)
-                .orElseThrow(()->new RuntimeException("User Not Found"));
+                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"User Not Found"));
 
         friendshipRepo.deleteBySenderAndReceiverAndStatus(user2,user1,"Accepted");
         return new ResponseEntity<>("Success",HttpStatus.OK);

@@ -23,7 +23,6 @@ public class UserController {
         return userService.searchUser(keyword,token);
     }
 
-
     @PostMapping("/sendfriendrequest")
     public ResponseEntity<String> sendFriendRequest(@RequestParam String username , @RequestHeader("Authorization") String authHeader  ){
         String token = authHeader.substring(7);
@@ -49,14 +48,10 @@ public class UserController {
 
     }
 
-
-
-
     @DeleteMapping("/rejectrequest")
     public ResponseEntity<String> rejectRequest(@RequestHeader("Authorization") String authHeader , @RequestParam String username){
         String token = authHeader.substring(7);
         return userService.rejectRequest(token , username);
-
     }
 
     @DeleteMapping("/cancelrequest")

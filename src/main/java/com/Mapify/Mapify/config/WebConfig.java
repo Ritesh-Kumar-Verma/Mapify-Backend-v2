@@ -36,7 +36,7 @@ public class WebConfig {
                 .csrf( csrf-> csrf.disable())
                 .sessionManagement(session-> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/h2-console/**" , "/login" , "/register","/health").permitAll()
+                        .requestMatchers("/h2-console/**" , "/login" , "/register","/health","/error").permitAll()
                         .anyRequest().authenticated()
                 )
                 .headers(header-> header.frameOptions(frame -> frame.sameOrigin()))
