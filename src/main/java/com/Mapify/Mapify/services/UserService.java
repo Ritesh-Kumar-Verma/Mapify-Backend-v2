@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -89,6 +90,9 @@ public class UserService {
         Users receiver = userLoginRepo.findByUsername(receiverUsername)
                 .orElseThrow(()->new RuntimeException("Receiver Not Found"));
 
+        Friendship friendship1 = friendshipRepo.findBySenderAndReceiverAndStatus(sender,receiver,"Accepted")
+                .orElseThrow(()->new ResponseStatusException(HttpStatus.CONFLICT,"Already Exist"));
+
 
         Friendship friendship = friendshipRepo.findBySenderAndReceiverAndStatus(sender,receiver,"Pending")
                 .orElseThrow(()->new RuntimeException("Friendship Not Found"));
@@ -97,11 +101,15 @@ public class UserService {
             friendship.setStatus("Accepted");
             friendshipRepo.save(friendship);
         }
+
         else{
             throw new RuntimeException("FriendShip not Pending");
         }
 
         return new ResponseEntity<>("Success" , HttpStatus.OK);
+
+
+
 
     }
 
